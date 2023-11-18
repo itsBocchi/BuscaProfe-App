@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Días de la Semana - {{ teacher.name }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Horario {{ teacher.name }} - Semana del {{ formatted_start_of_week }}</h1>
+        <a href="{% url 'teacher_list' %}">Ver lista de profesores</a>
+        <br>
+        <div class="row">
+            {% for day, day_events in events_by_day.items %}
+                <div class="col">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ day.name }}</h5>
+                            
+                            {% for event in day_events %}
+                                <div class="card mb-2 {% if event.reserva %}bg-success{% endif %}">
+                                    <div class="card-body">
+                                        <h6 class="card-subtitle mb-2 text-muted">{{ event.name }}</h6>
+                                        <p class="card-text">{{ event.start_time|time:"H:i" }} to {{ event.end_time|time:"H:i" }}</p>
+                                        <a href="{% url 'reservar_evento' event.id %}" class="btn btn-primary">Reservar</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
