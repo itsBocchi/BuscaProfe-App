@@ -3,6 +3,8 @@ from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from core.forms import UserProfileForm
+from core.models import UserProfile
 
 # Create your views here.
 
@@ -10,18 +12,39 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, 'core/home.html')
 
-def Registro(request):
+def registro(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  # Reemplaza 'home' con la URL a la que quieres redirigir después del registro
+            return redirect('new_profile')  
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-def Iniciar_Sesion(request):
+@login_required
+def crear_perfil(request):
+    # Verificar si el perfil ya existe para el usuario actual
+    try:
+        perfil_existente = request.user.userprofile
+        return redirect('perfil_existente')  # Redirigir a una página que informa que el perfil ya existe
+    except UserProfile.DoesNotExist:
+        pass
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            perfil = form.save(commit=False)
+            perfil.user = request.user
+            perfil.save()
+            return redirect('seleccionar_tipo_perfil')
+    else:
+        form = UserProfileForm()
+
+    return render(request, 'crear_perfil.html', {'form': form})
+
+def iniciar_sesion(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -48,6 +71,6 @@ def Iniciar_Sesion(request):
 
     return render(request, 'registration/login.html', {'form': form})
 
-def Cerrar_Sesion(request):
+def cerrar_sesion(request):
     logout(request)
     return redirect('login')  # Reemplaza 'login' con la URL a la que quieres redirigir después de cerrar sesión
