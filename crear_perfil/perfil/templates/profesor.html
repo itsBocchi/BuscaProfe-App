@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfiles de Profesores{% endblock %}
+
+{% block content %}
+<h1>Perfiles de Profesores</h1>
+<ul class="list-group">
+  {% for profesor in profesores %}
+    <li class="list-group-item">
+        <h5>{{ profesor.nombre }}</h5>
+        <p>{{ profesor.especializacion }}</p>
+        <p>{{ profesor.horarios }}</p>
+        <p>{{ profesor.tarifas }}</p>
+        <a href="{% url 'editar_profesor' %}" class="btn btn-primary">Editar</a>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}
