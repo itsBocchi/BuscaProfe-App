@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
@@ -31,3 +32,9 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"Reserva para {self.evento.name}" if self.evento else "Reserva sin evento"
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Agrega cualquier campo adicional que necesites para tu usuario
+
+    def __str__(self):
+        return self.user.username
