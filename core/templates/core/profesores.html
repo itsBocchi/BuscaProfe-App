@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Profesores</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-4">Lista de Profesores</h1>
+        <ul>
+            {% for teacher in teachers %}
+                <li><a href="{% url 'teacher_days' teacher.id %}">{{ teacher.name }}</a></li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'todas_reservas' %}">Ver todas las reservas</a>
+    </div>
+</body>
+</html>
