@@ -3,10 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bienvenido a BuscaProfe</title>
 </head>
 <body>
-    <h1>Este es el inicio de la pagina</h1>
+    <h1>Bienvenido a BuscaProfe</h1>
+    <p>Estás logueado como {{ user.username }}</p>
+    <a href="{% url 'editar_perfil' %}">Editar perfil</a>
+    <!-- link a lista_profesor si no soy profesor-->
+    {% if tipo_usuario == 'alumno' %}
+        <a href="{% url 'lista_profesor' %}">Ver lista de profesores</a>
+    {% endif %}
+    <h2>Mis reservas</h2>
+    <ul>
+        {% for reservation in reservations %}
+        <li><a href="{% url 'reservation_detail' reservation.id %}">{{ reservation.day }} {{ reservation.start_time }} - {{ reservation.end_time }}</a></li>
+        {% endfor %}
+    </ul>
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Cerrar sesión</button>
