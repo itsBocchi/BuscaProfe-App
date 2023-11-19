@@ -1,19 +1,21 @@
 from datetime import datetime, timedelta
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
-from .models import Teacher, Day, Event, Reserva
-from .forms import ReservaForm
+from .models import UserProfile, Day, Event, Reserva, ComentarioPerfil
+from .forms import ReservaForm, UserProfileForm, ComentarioPerfilForm
 
-def teacher_list(request):
-    teachers = Teacher.objects.all()
-    return render(request, 'core/profesores.html', {'teachers': teachers})
+def lista_profesor(request):
+    profesores = UserProfile.objects.filter(tipo_usuario='profesor')
 
-def teacher_days(request, teacher_id):
-    teacher = get_object_or_404(Teacher, id=teacher_id)
+    return render(request, 'core/profesores.html', {'profesores': profesores})
+
+def dias_profesor(request, id_profesor):
+    profesor = get_object_or_404(UserProfile, id=id_profesor)
     days = Day.objects.all()
-    events = Event.objects.filter(teacher=teacher)
+    events = Event.objects.filter(profesor=profesor)
     events_by_day = {day: events.filter(day=day) for day in days}
 
     today = datetime.now()
@@ -21,7 +23,7 @@ def teacher_days(request, teacher_id):
     formatted_start_of_week = start_of_week.strftime('%Y-%m-%d')
 
     context = {
-        'teacher': teacher,
+        'profesor': profesor,
         'days': days,
         'events_by_day': events_by_day,
         'formatted_start_of_week': formatted_start_of_week,
@@ -58,21 +60,43 @@ def reservar_evento(request, event_id):
 
     context = {'form': form, 'event': event}
     return render(request, 'core/reservar.html', context)
-def home(request):
-    return render(request, 'core/home.html')
 
-def Registro(request):
+def home(request):
+    return render(request, 'core/home.html', {'tipo_usuario': request.user.userprofile.tipo_usuario})
+
+def registro(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  # Reemplaza 'home' con la URL a la que quieres redirigir después del registro
+            return redirect('crear_perfil')  # Reemplaza 'home' con la URL a la que quieres redirigir después del registro
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-def Iniciar_Sesion(request):
+@login_required
+def crear_perfil(request):
+    # Verificar si el perfil ya existe para el usuario actual
+    try:
+        perfil_existente = request.user.userprofile
+        return redirect('perfil_existente')  # Redirigir a una página que informa que el perfil ya existe
+    except UserProfile.DoesNotExist:
+        pass
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            perfil = form.save(commit=False)
+            perfil.user = request.user
+            perfil.save()
+            return redirect('seleccionar_tipo_perfil')
+    else:
+        form = UserProfileForm()
+
+    return render(request, 'crear_perfil.html', {'form': form})
+
+def iniciar_sesion(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -99,6 +123,55 @@ def Iniciar_Sesion(request):
 
     return render(request, 'registration/login.html', {'form': form})
 
-def Cerrar_Sesion(request):
+def cerrar_sesion(request):
     logout(request)
     return redirect('login')  # Reemplaza 'login' con la URL a la que quieres redirigir después de cerrar sesión
+
+def crear_perfil(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+
+            return redirect('home')
+    else:
+        form = UserProfileForm()
+
+    return render(request, 'registration/crear_perfil.html', {'form': form})
+
+
+def editar_perfil(request):
+    
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+
+            return redirect('perfil', id_usuario=request.user.id)
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    return render(request, 'registration/editar_perfil.html', {'form': form})
+
+def perfil(request, id_usuario):
+    user_profile = get_object_or_404(UserProfile, user_id=id_usuario)
+    ubicacion_perfil = 'core/perfil.html'  # Remove extra indentation here
+
+    if request.method == 'POST':
+        form = ComentarioPerfilForm(request.POST)
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario.autor = request.user
+            comentario.destinatario = user_profile.user
+            comentario.save()
+            return redirect('perfil', id_usuario=id_usuario)
+    else:
+        form = ComentarioPerfilForm()
+
+    comentarios = ComentarioPerfil.objects.filter(destinatario=user_profile.user)
+    context = {'comentarios': comentarios, 'form': form, 'user_profile': user_profile}
+    return render(request, ubicacion_perfil, context)

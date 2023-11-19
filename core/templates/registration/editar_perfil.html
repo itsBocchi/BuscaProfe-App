@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil</title>
+</head>
+<body>
+    <a href="{% url 'home' %}" class="btn btn-primary">Inicio</a>
+    <a href="{% url 'perfil' user.id %}" class="btn btn-primary">Perfil</a>
+    <a href="{% url 'logout' %}" class="btn btn-primary">Cerrar sesión</a>
+    <h1>Editar Perfil</h1>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar cambios</button>
+    </form>
+</body>
+</html>
