@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil de Profesor{% endblock %}
+
+{% block content %}
+    <h1>Perfil de Profesor</h1>
+    <p>Nombre: {{ profesor.nombre }}</p>
+    <p>Sexo: {{ profesor.sexo }}</p>
+    <p>Edad: {{ profesor.edad }}</p>
+    <p>Especialización: {{ profesor.especializacion }}</p>
+    <p>Correo: {{ profesor.correo }}</p>
+    <p>Horarios: {{ profesor.horarios }}</p>
+    <p>Tarifas: {{ profesor.tarifas }}</p>
+
+    <a href="{% url 'crear_perfil_profesor' %}" class="btn btn-primary">Editar Perfil</a>
+{% endblock %}
+
+# r http://localhost:8000/crear_perfil_alumno/ para crear un perfil de alumno y http://localhost:8000/perfil_alumno/ para ver el perfil creado.
+#Visita http://localhost:8000/crear_perfil_profesor/ para crear un perfil de profesor y http://localhost:8000/perfil_profesor/ para ver el perfil creado.

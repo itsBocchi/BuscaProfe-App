@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil de Alumno{% endblock %}
+
+{% block content %}
+    <h1>Perfil de Alumno</h1>
+    <p>Nombre: {{ alumno.nombre }}</p>
+    <p>Sexo: {{ alumno.sexo }}</p>
+    <p>Edad: {{ alumno.edad }}</p>
+    <p>Correo: {{ alumno.correo }}</p>
+
+    <a href="{% url 'crear_perfil_alumno' %}" class="btn btn-primary">Editar Perfil</a>
+{% endblock %}
