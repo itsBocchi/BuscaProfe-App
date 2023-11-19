@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
@@ -126,7 +127,7 @@ def cerrar_sesion(request):
     logout(request)
     return redirect('login')  # Reemplaza 'login' con la URL a la que quieres redirigir después de cerrar sesión
 
-def crear_Perfil(request):
+def crear_perfil(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST)
         if form.is_valid():
@@ -141,7 +142,7 @@ def crear_Perfil(request):
     return render(request, 'registration/crear_perfil.html', {'form': form})
 
 
-def editar_Perfil(request):
+def editar_perfil(request):
     
     user_profile = get_object_or_404(UserProfile, user=request.user)
 
