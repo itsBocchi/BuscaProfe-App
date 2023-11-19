@@ -62,6 +62,8 @@ def reservar_evento(request, event_id):
     return render(request, 'core/reservar.html', context)
 
 def home(request):
+    if not request.user.is_authenticated:
+         return redirect('login')
     return render(request, 'core/home.html', {'tipo_usuario': request.user.userprofile.tipo_usuario})
 
 def registro(request):
