@@ -7,5 +7,31 @@
 </head>
 <body>
     <a href="{% url 'home' %}" class="btn btn-primary">Inicio</a>
+    <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+    <a href="{% url 'logout' %}" class="btn btn-primary">Cerrar sesión</a>
+    <h1>Perfil</h1>
+    <p>Usuario: {{ user_profile.user }}</p>
+    <p>Tipo de usuario: {{ user_profile.tipo_usuario }}</p>
+    <p>Nombre: {{ user_profile.nombre }}</p>
+    <p>Apellido: {{ user_profile.apellido }}</p>
+    <p>Correo: {{ user_profile.email }}</p>
+    <p>Telefono: {{ user_profile.telefono }}</p>
+
+    <h3>Deja tu Comentario</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar cambios</button>
+    </form>
+    <h3>Comentarios</h3>
+    <ul>
+        {% for comment in comentarios %}
+        <!-- bold -->
+        <b>{{ comment.autor}}</b> {{ commentt.fecha }}
+        <br>
+        {{ comment.texto }}
+        <br>
+        {% endfor %}
+    </ul>
 </body>
 </html>

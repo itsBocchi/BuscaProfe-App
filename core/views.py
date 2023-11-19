@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
-from .models import UserProfile, Day, Event, Reserva
-from .forms import ReservaForm, UserProfileForm
+from .models import UserProfile, Day, Event, Reserva, ComentarioPerfil
+from .forms import ReservaForm, UserProfileForm, ComentarioPerfilForm
 
 def lista_profesor(request):
     profesores = UserProfile.objects.filter(tipo_usuario='profesor')
@@ -62,7 +62,6 @@ def reservar_evento(request, event_id):
     return render(request, 'core/reservar.html', context)
 
 def home(request):
-    # muestro 'core/home.html' y el tipo de usuario
     return render(request, 'core/home.html', {'tipo_usuario': request.user.userprofile.tipo_usuario})
 
 def registro(request):
@@ -152,8 +151,25 @@ def editar_perfil(request):
         if form.is_valid():
             form.save()
 
-            return redirect('home')
+            return redirect('perfil')
     else:
         form = UserProfileForm(instance=user_profile)
 
     return render(request, 'registration/editar_perfil.html', {'form': form})
+
+def perfil(request):
+    # si se pasa un id de usuario, se muestra el perfil de ese usuario
+    # si no, se muestra el perfil del usuario logueado
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    comentarios = ComentarioPerfil.objects.filter(destinatario = user_profile.user)
+    if request.method == 'POST':
+        form = ComentarioPerfilForm(request.POST)
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario.autor = request.user
+            comentario.destinatario = user_profile.user
+            comentario.save()
+            return redirect('perfil')
+    else:
+        form = ComentarioPerfilForm()
+    return render(request, 'core/perfil.html', {'user_profile': user_profile, 'comentarios': comentarios, 'form': form})

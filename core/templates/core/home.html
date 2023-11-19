@@ -7,9 +7,11 @@
 </head>
 
 <body>
+    <a href="{% url 'home' %}" class="btn btn-primary">Inicio</a>
+    <a href="{% url 'perfil' %}" class="btn btn-primary">Perfil</a>
+    <a href="{% url 'logout' %}" class="btn btn-primary">Cerrar sesión</a>
     <h1>Bienvenido a BuscaProfe</h1>
     <p>Estás logueado como {{ user.username }}</p>
-    <a href="{% url 'editar_perfil' %}">Editar perfil</a>
     <!-- link a lista_profesor si no soy profesor-->
     {% if tipo_usuario == 'alumno' %}
         <a href="{% url 'lista_profesor' %}">Ver lista de profesores</a>

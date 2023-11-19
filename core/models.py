@@ -38,3 +38,12 @@ class Reserva(models.Model):
     completada = models.BooleanField(default=False)
     def __str__(self):
         return f"Reserva para {self.evento.name}" if self.evento else "Reserva sin evento"
+    
+    # almacena comentarios de un usuario en el perfil de otro usuario
+class ComentarioPerfil(models.Model):
+    autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='autor')
+    destinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='destinatario')
+    texto = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Comentario de {self.autor.username} a {self.destinatario.username}"

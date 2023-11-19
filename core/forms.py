@@ -1,5 +1,5 @@
 from django import forms
-from .models import Event, Reserva, UserProfile
+from .models import Event, Reserva, UserProfile, ComentarioPerfil
 
 class EventForm(forms.ModelForm):
     class Meta:
@@ -15,3 +15,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['tipo_usuario', 'nombre', 'apellido', 'telefono', 'email']
+
+class ComentarioPerfilForm(forms.ModelForm):
+    class Meta:
+        model = ComentarioPerfil
+        fields = ['texto']
