@@ -60,6 +60,7 @@ def reservar_evento(request, event_id):
 
     context = {'form': form, 'event': event}
     return render(request, 'core/reservar.html', context)
+
 def home(request):
     # muestro 'core/home.html' y el tipo de usuario
     return render(request, 'core/home.html', {'tipo_usuario': request.user.userprofile.tipo_usuario})
