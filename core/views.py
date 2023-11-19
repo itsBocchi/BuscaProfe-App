@@ -1,16 +1,67 @@
+from datetime import datetime, timedelta
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from core.forms import UserProfileForm
-from core.models import UserProfile
+from .models import UserProfile, Day, Event, Reserva
+from .forms import ReservaForm, UserProfileForm
 
-# Create your views here.
+def lista_profesor(request):
+    profesores = UserProfile.objects.filter(tipo_usuario='profesor')
 
-@login_required(login_url='login')
+    return render(request, 'core/profesores.html', {'profesores': profesores})
+
+def dias_profesor(request, id_profesor):
+    profesor = get_object_or_404(UserProfile, id=id_profesor)
+    days = Day.objects.all()
+    events = Event.objects.filter(profesor=profesor)
+    events_by_day = {day: events.filter(day=day) for day in days}
+
+    today = datetime.now()
+    start_of_week = today - timedelta(days=today.weekday())
+    formatted_start_of_week = start_of_week.strftime('%Y-%m-%d')
+
+    context = {
+        'profesor': profesor,
+        'days': days,
+        'events_by_day': events_by_day,
+        'formatted_start_of_week': formatted_start_of_week,
+    }
+
+    return render(request, 'core/profesor_dias.html', context)
+
+def todas_reservas(request):
+    reservas = Reserva.objects.all()
+    context = {'reservas': reservas}
+    return render(request, 'core/eventos.html', context)
+
+def reservar_evento(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            reserva_existente = Reserva.objects.filter(evento=event)
+            if reserva_existente.exists():
+                messages.error(request, 'Este evento ya ha sido reservado.')
+                return redirect('todas_reservas')
+
+            reserva = form.save(commit=False)
+            reserva.evento = event
+            reserva.save()
+
+            event.completada = True
+            event.save()
+
+            return redirect('todas_reservas')
+    else:
+        form = ReservaForm(initial={'evento': event})
+
+    context = {'form': form, 'event': event}
+    return render(request, 'core/reservar.html', context)
 def home(request):
-    return render(request, 'core/home.html')
+    # muestro 'core/home.html' y el tipo de usuario
+    return render(request, 'core/home.html', {'tipo_usuario': request.user.userprofile.tipo_usuario})
 
 def registro(request):
     if request.method == 'POST':
@@ -18,7 +69,7 @@ def registro(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('new_profile')  
+            return redirect('crear_perfil')  # Reemplaza 'home' con la URL a la que quieres redirigir después del registro
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -74,3 +125,33 @@ def iniciar_sesion(request):
 def cerrar_sesion(request):
     logout(request)
     return redirect('login')  # Reemplaza 'login' con la URL a la que quieres redirigir después de cerrar sesión
+
+def crear_Perfil(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+
+            return redirect('home')
+    else:
+        form = UserProfileForm()
+
+    return render(request, 'registration/crear_perfil.html', {'form': form})
+
+
+def editar_Perfil(request):
+    
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+
+            return redirect('home')
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    return render(request, 'registration/editar_perfil.html', {'form': form})
