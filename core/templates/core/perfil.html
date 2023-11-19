@@ -7,7 +7,11 @@
 </head>
 <body>
     <a href="{% url 'home' %}" class="btn btn-primary">Inicio</a>
-    <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+    {% if user_profile.id == user.id %}
+        <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+    {% else %}
+        <a href="{% url 'perfil' user.id %}" class="btn btn-primary">Perfil</a>
+    {% endif %}
     <a href="{% url 'logout' %}" class="btn btn-primary">Cerrar sesión</a>
     <h1>Perfil</h1>
     <p>Usuario: {{ user_profile.user }}</p>
@@ -27,7 +31,7 @@
     <ul>
         {% for comment in comentarios %}
         <!-- bold -->
-        <b>{{ comment.autor}}</b> {{ commentt.fecha }}
+        <b><a href="{% url 'perfil' comment.autor.id %}">{{comment.autor}}</a></b> {{ comment.fecha }}
         <br>
         {{ comment.texto }}
         <br>

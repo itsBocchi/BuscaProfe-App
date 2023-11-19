@@ -151,17 +151,16 @@ def editar_perfil(request):
         if form.is_valid():
             form.save()
 
-            return redirect('perfil')
+            return redirect('perfil', id_usuario=request.user.id)
     else:
         form = UserProfileForm(instance=user_profile)
 
     return render(request, 'registration/editar_perfil.html', {'form': form})
 
-def perfil(request):
-    # si se pasa un id de usuario, se muestra el perfil de ese usuario
-    # si no, se muestra el perfil del usuario logueado
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    comentarios = ComentarioPerfil.objects.filter(destinatario = user_profile.user)
+def perfil(request, id_usuario):
+    user_profile = get_object_or_404(UserProfile, user_id=id_usuario)
+    ubicacion_perfil = 'core/perfil.html'  # Remove extra indentation here
+
     if request.method == 'POST':
         form = ComentarioPerfilForm(request.POST)
         if form.is_valid():
@@ -169,7 +168,10 @@ def perfil(request):
             comentario.autor = request.user
             comentario.destinatario = user_profile.user
             comentario.save()
-            return redirect('perfil')
+            return redirect('perfil', id_usuario=id_usuario)
     else:
         form = ComentarioPerfilForm()
-    return render(request, 'core/perfil.html', {'user_profile': user_profile, 'comentarios': comentarios, 'form': form})
+
+    comentarios = ComentarioPerfil.objects.filter(destinatario=user_profile.user)
+    context = {'comentarios': comentarios, 'form': form, 'user_profile': user_profile}
+    return render(request, ubicacion_perfil, context)

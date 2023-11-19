@@ -8,7 +8,7 @@
 
 <body>
     <a href="{% url 'home' %}" class="btn btn-primary">Inicio</a>
-    <a href="{% url 'perfil' %}" class="btn btn-primary">Perfil</a>
+    <a href="{% url 'perfil' user.id %}" class="btn btn-primary">Perfil</a>
     <a href="{% url 'logout' %}" class="btn btn-primary">Cerrar sesión</a>
     <h1>Bienvenido a BuscaProfe</h1>
     <p>Estás logueado como {{ user.username }}</p>
