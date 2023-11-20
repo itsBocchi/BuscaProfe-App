@@ -23,8 +23,7 @@
         </ul>
     {% endif %}
     {% if tipo_usuario == 'profesor' %}
-        <a href="{% url 'lista_alumno' %}">Ver lista de alumnos</a>
-        <h2>Mis Horarios</h2>
+        <h2>Mis Horarios reservados</h2>
         <ul>
             {% for reservation in reservations %}
             <li><a href="{% url 'reservation_detail' reservation.id %}">{{ reservation.day }} {{ reservation.start_time }} - {{ reservation.end_time }}</a></li>
