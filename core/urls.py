@@ -2,6 +2,7 @@ from django.urls import path
 from .views import lista_profesor, dias_profesor, reservar_evento, todas_reservas
 from .views import registro, iniciar_sesion, cerrar_sesion, home, crear_perfil, editar_perfil
 from .views import perfil
+from core import views
 
 urlpatterns = [
     path('', home, name='home'),
@@ -15,4 +16,6 @@ urlpatterns = [
     path('profesores/<int:id_profesor>/days/', dias_profesor, name='dias_profesor'),
     path('reservar_evento/<int:event_id>/', reservar_evento, name='reservar_evento'),
     path('todas_reservas/', todas_reservas, name='todas_reservas'),
+    path('horario/', views.registrar_hora, name='horario'),
+    path('ver/', views.hora, name='verhorario'),
 ]

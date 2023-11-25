@@ -1,0 +1,51 @@
+{% extends 'Horario/base2.html' %}
+
+{% block content %}
+    <h1>Horas de atención</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <!-- <h2>Filtrar por Nivel</h2> -->
+            <div class="dropdown">
+                <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonNivel" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtrar por Nivel
+                </button> -->
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonNivel">
+                    <li><a class="dropdown-item" href=".">Mostrar todos</a></li>
+                    <li><a class="dropdown-item" href="?nivel=GEN">General</a></li>
+                    <li><a class="dropdown-item" href="?nivel=PRE">Ciclo Preescolar</a></li>
+                    <li><a class="dropdown-item" href="?nivel=BAS">Ciclo Básico</a></li>
+                    <li><a class="dropdown-item" href="?nivel=MED">Ciclo Medio</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Filtrar por Categoría</h2>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonCategoria" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtrar por Categoría
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonCategoria">
+                    <li><a class="dropdown-item" href=".">Mostrar todos</a></li>
+                    {% for categoria in categorias %}
+                        <li><a class="dropdown-item" href="?categoria={{ categoria.id }}">{{ categoria.nombre }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h2></h2>
+    <ul class="list-group">
+        {% for comunicado in comunicados %}
+            <li class="list-group-item">
+                <h5 class="mb-1">{{ forloop.counter }}. {{ comunicado.titulo }}</h5>
+                <p class="mb-1">{{ comunicado.detalle  }}</p>
+                <small>Correlativo: {{ comunicado.correlativo }} | Publicado por: {{ comunicado.publicado_por.username }} | Fecha: {{ comunicado.fecha_envio|date:"d/m/Y" }} | Hora: {{ comunicado.get_nivel_display }}</small>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No hay comunicados disponibles.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

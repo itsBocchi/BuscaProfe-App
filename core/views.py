@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
-from .models import UserProfile, Day, Event, Reserva, ComentarioPerfil
-from .forms import ReservaForm, UserProfileForm, ComentarioPerfilForm
+from .models import UserProfile, Day, Event, Reserva, ComentarioPerfil, Categoria, Hora
+from .forms import ReservaForm, UserProfileForm, ComentarioPerfilForm, HoraForm
+from django.utils import timezone
 
 def lista_profesor(request):
     profesores = UserProfile.objects.filter(tipo_usuario='profesor')
@@ -177,3 +178,71 @@ def perfil(request, id_usuario):
     comentarios = ComentarioPerfil.objects.filter(destinatario=user_profile.user)
     context = {'comentarios': comentarios, 'form': form, 'user_profile': user_profile}
     return render(request, ubicacion_perfil, context)
+
+
+
+
+    # ---------------------------------------------------------------------
+
+def hora(request):
+
+    """
+    Vista para mostrar la página principal que lista todos los comunicados.
+
+    - Obtiene todos los comunicados.
+    - Filtra por nivel si se especifica.
+    - Filtra por categoría si se especifica.
+    - Obtiene todas las categorías.
+
+    Retorna la respuesta renderizada con el contexto en la plantilla 'comunicados/index.html'.
+    """
+
+    comunicados = Hora.objects.all()
+    nivel = request.GET.get('nivel')
+    categoria_id = request.GET.get('categoria')
+    if nivel:
+        comunicados = comunicados.filter(nivel=nivel)
+
+    if categoria_id:
+        categoria = Categoria.objects.get(id=categoria_id)
+        comunicados = comunicados.filter(categoria=categoria)
+
+    categorias = Categoria.objects.all()
+    
+    context = {
+        'comunicados': comunicados,
+        'categorias': categorias,
+    }
+    return render(request, 'horario/verhorario.html', context)
+
+
+@login_required
+def registrar_hora(request):
+    """
+    Vista para registrar un nuevo comunicado.
+    
+    - Obtiene la fecha actual.
+    - Si el método de solicitud es POST, procesa el formulario enviado y guarda el comunicado.
+    - Si el método de solicitud es GET, muestra el formulario de registro de comunicado.
+    
+    Retorna la respuesta renderizada con el contexto en la plantilla 'comunicados/registrar_comunicado.html'.
+    """
+    fecha_actual = timezone.now().date()
+    
+    if request.method == 'POST':
+        form = HoraForm(request.POST)
+        if form.is_valid():
+            comunicado = form.save(commit=False)
+            comunicado.publicado_por = request.user
+            comunicado.save()
+            messages.success(request, 'Comunicado registrado exitosamente.')
+            return redirect('verhorario')
+    else:
+        form = HoraForm()
+    
+    context = {
+        'fecha_actual': fecha_actual,
+        'form': form,
+    }
+    return render(request, 'horario/horario.html', context)
+

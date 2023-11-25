@@ -1,0 +1,35 @@
+{% extends 'Horario/base2.html' %}
+
+{% block content %}
+  <h1>Registrar Hora</h1>
+  <div class="row mx-md-n5">
+    <form method="post" action="{% url 'horario' %}">
+      {% csrf_token %}
+      <div class="col-12 px-md-5 mb-3">
+        <label for="{{ form.titulo.id_for_label }}">Titulo</label>
+        <input type="text" name="{{ form.titulo.name }}" id="{{ form.titulo.id_for_label }}" class="form-control form-control-lg" value="{{ form.titulo.value|default_if_none:'' }}">
+      </div>
+      <div class="col-12 px-md-5 mb-3">
+        <label for="{{ form.detalle.id_for_label }}">Detalle</label>
+        <textarea name="{{ form.detalle.name }}" id="{{ form.detalle.id_for_label }}" class="form-control form-control-lg">{{ form.detalle.value|default_if_none:'' }}</textarea>
+      </div>
+      <div class="col-12 col-md-6 px-md-5 mb-3">
+        <label for="{{ form.nivel.id_for_label }}">Horario</label>
+        {{ form.nivel }}
+      </div>
+      <div class="col-12 col-md-6 px-md-5 mb-3">
+        <label for="publicado_por">Profesor:</label>
+        <input type="text" name="publicado_por" id="publicado_por" class="form-control" value="{{ request.user.username }}" readonly>
+      </div>
+      <div class="col-12 col-md-6 px-md-5 mb-3">
+        <label for="{{ form.categoria.id_for_label }}">Categoría</label>
+        {{ form.categoria }}
+      </div>
+      <div class="col-12 px-md-5">
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+
