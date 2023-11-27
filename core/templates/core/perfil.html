@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+</head>
+<body>
+    <a href="{% url 'home' %}" class="btn btn-primary">Inicio</a>
+    {% if user_profile.id == user.id %}
+        <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+    {% else %}
+        <a href="{% url 'perfil' user.id %}" class="btn btn-primary">Perfil</a>
+    {% endif %}
+    <a href="{% url 'logout' %}" class="btn btn-primary">Cerrar sesión</a>
+    
+    <!-- Nuevo botón agregado -->
+    {% if user.is_authenticated and user_profile.tipo_usuario == 'profesor' %}
+    <a href="{% url 'verhorario' %}" class="btn btn-primary">Horarios</a>
+{% endif %}
+    <h1>Perfil</h1>
+    <p>Usuario: {{ user_profile.user }}</p>
+    <p>Tipo de usuario: {{ user_profile.tipo_usuario }}</p>
+    <p>Nombre: {{ user_profile.nombre }}</p>
+    <p>Apellido: {{ user_profile.apellido }}</p>
+    <p>Correo: {{ user_profile.email }}</p>
+    <p>Telefono: {{ user_profile.telefono }}</p>
+    
+    {% if user.is_authenticated and user_profile.tipo_usuario == 'alumno' %}
+    <h3>Deja tu Comentario</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar cambios</button>
+    </form>
+    <h3>Comentarios</h3>
+    <ul>
+        {% for comment in comentarios %}
+        <!-- bold -->
+        <b><a href="{% url 'perfil' comment.autor.id %}">{{comment.autor}}</a></b> {{ comment.fecha }}
+        <br>
+        {{ comment.texto }}
+        <br>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>
