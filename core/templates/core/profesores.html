@@ -9,7 +9,7 @@
         <h1 class="mt-4 mb-4">Lista de Profesores</h1>
         <ul>
             {% for profesor in profesores %}
-                <li><a href="{% url 'dias_profesor' profesor.id %}">{{ profesor.nombre }}</a></li>
+                <li><a href="{% url 'dias_profesor' profesor.id %}">{{ profesor.nombre }}</a> <a href="{% url 'perfil' profesor.id %}" class="btn btn-primary">Ver perfil</a></li>
             {% endfor %}
         </ul>
         <a href="{% url 'todas_reservas' %}">Ver todas las reservas</a>

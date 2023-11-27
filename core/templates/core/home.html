@@ -15,20 +15,16 @@
     <!-- link a lista_profesor si no soy profesor-->
     {% if tipo_usuario == 'alumno' %}
         <a href="{% url 'lista_profesor' %}">Ver lista de profesores</a>
-        <h2>Mis reservas</h2>
-        <ul>
-            {% for reservation in reservations %}
-            <li><a href="{% url 'reservation_detail' reservation.id %}">{{ reservation.day }} {{ reservation.start_time }} - {{ reservation.end_time }}</a></li>
-            {% endfor %}
-        </ul>
+        <li><a href="{% url 'todas_reservas' %}">Mis reservas</a></li>
     {% endif %}
-    {% if tipo_usuario == 'profesor' %}
-        <h2>Mis Horarios reservados</h2>
-        <ul>
-            {% for reservation in reservations %}
-            <li><a href="{% url 'reservation_detail' reservation.id %}">{{ reservation.day }} {{ reservation.start_time }} - {{ reservation.end_time }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <ul>
+        {% for reservation in reservations %}
+        <li><a href="{% url 'reservation_detail' reservation.id %}">{{ reservation.day }} {{ reservation.start_time }} - {{ reservation.end_time }}</a></li>
+        {% endfor %}
+    </ul>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Cerrar sesión</button>
+    </form>
 </body>
 </html>
