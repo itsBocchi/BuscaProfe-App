@@ -15,8 +15,8 @@
     <!-- link a lista_profesor si no soy profesor-->
     {% if tipo_usuario == 'alumno' %}
         <a href="{% url 'lista_profesor' %}">Ver lista de profesores</a>
+        <li><a href="{% url 'todas_reservas' %}">Mis reservas</a></li>
     {% endif %}
-    <h2>Mis reservas</h2>
     <ul>
         {% for reservation in reservations %}
         <li><a href="{% url 'reservation_detail' reservation.id %}">{{ reservation.day }} {{ reservation.start_time }} - {{ reservation.end_time }}</a></li>

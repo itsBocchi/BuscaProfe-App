@@ -1,11 +1,19 @@
 from django.db import models
+from django import forms
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 
 class Day(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.TextField()
 
     def __str__(self):
+        return self.name
+
+class Teacher(models.Model):
+    name = models.CharField(max_length=100)
+
+    def str(self):
         return self.name
 
 class UserProfile(models.Model):
@@ -49,7 +57,7 @@ class ComentarioPerfil(models.Model):
         return f"Comentario de {self.autor.username} a {self.destinatario.username}"
 
 
-# ---------------------------------------------------------------------------------------------------------
+
 
 class Categoria(models.Model):
     nombre = models.TextField()
@@ -96,6 +104,8 @@ class Hora(models.Model):
     fecha_envio = models.DateTimeField(auto_now_add=True)
     fecha_ultima_modificacion = models.DateTimeField(auto_now=True)
     publicado_por = models.ForeignKey(User, on_delete=models.CASCADE)
+    dia = models.ForeignKey(Day, on_delete=models.CASCADE, null=True)
+    reserva = models.OneToOneField('Reserva', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.titulo

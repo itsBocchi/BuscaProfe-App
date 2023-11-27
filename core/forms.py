@@ -1,10 +1,11 @@
 from django import forms
-from .models import Event, Reserva, UserProfile, ComentarioPerfil, Hora
-
+from .models import Event, Reserva, UserProfile, ComentarioPerfil, Hora, Day
+from django.utils import timezone
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['name', 'start_time', 'end_time', 'day']
+
 
 class ReservaForm(forms.ModelForm):
     class Meta:
@@ -36,11 +37,13 @@ class HoraForm(forms.ModelForm):
         return cleaned_data
         # Devolver los datos limpios modificados.
 
+    dia = forms.ModelChoiceField(queryset=Day.objects.all(), label='Día')
+
     class Meta:
         # La clase Meta proporciona información adicional sobre el formulario.
         model = Hora
         # Especifica el modelo con el que está asociado el formulario, en este caso, el modelo Comunicado.
-        fields = ['titulo', 'detalle', 'categoria', 'nivel']
+        fields = ['titulo', 'detalle', 'categoria', 'nivel', 'dia']
         # Define los campos que se incluirán en el formulario.
 
     def __init__(self, *args, **kwargs):

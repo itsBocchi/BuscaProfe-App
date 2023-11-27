@@ -4,21 +4,20 @@
     <h1>Horas de atención</h1>
 
     <div class="row">
-        <div class="col-md-6">
-            <!-- <h2>Filtrar por Nivel</h2> -->
+        <!-- <div class="col-md-6">
+            <h2>Filtrar por Día</h2>
             <div class="dropdown">
-                <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonNivel" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filtrar por Nivel
-                </button> -->
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonNivel">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonDay" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtrar por Día
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonDay">
                     <li><a class="dropdown-item" href=".">Mostrar todos</a></li>
-                    <li><a class="dropdown-item" href="?nivel=GEN">General</a></li>
-                    <li><a class="dropdown-item" href="?nivel=PRE">Ciclo Preescolar</a></li>
-                    <li><a class="dropdown-item" href="?nivel=BAS">Ciclo Básico</a></li>
-                    <li><a class="dropdown-item" href="?nivel=MED">Ciclo Medio</a></li>
+                    {% for day in days %}
+                        <li><a class="dropdown-item" href="?day={{ day.id }}">{{ day.name }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
-        </div>
+        </div> -->
 
         <div class="col-md-6">
             <h2>Filtrar por Categoría</h2>
@@ -42,7 +41,7 @@
             <li class="list-group-item">
                 <h5 class="mb-1">{{ forloop.counter }}. {{ comunicado.titulo }}</h5>
                 <p class="mb-1">{{ comunicado.detalle  }}</p>
-                <small>Correlativo: {{ comunicado.correlativo }} | Publicado por: {{ comunicado.publicado_por.username }} | Fecha: {{ comunicado.fecha_envio|date:"d/m/Y" }} | Hora: {{ comunicado.get_nivel_display }}</small>
+                <small>Correlativo: {{ comunicado.correlativo }} | Publicado por: {{ comunicado.publicado_por.username }} | Fecha: {{ comunicado.fecha_envio|date:"d/m/Y" }} | Hora: {{ comunicado.get_nivel_display }} | Día: {{ comunicado.dia.name }}</small>
             </li>
         {% empty %}
             <li class="list-group-item">No hay comunicados disponibles.</li>
